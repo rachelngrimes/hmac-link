@@ -1,5 +1,5 @@
 {
   "rewrites": [
-    { "source": "/go/(.*)", "destination": "/api/validate?token=$1" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
