@@ -5,7 +5,7 @@
 </head>
 <body>
 
-nigger
+nya arigato
 
   <script>
     function fastToken() {
@@ -27,18 +27,23 @@ nigger
       return result;
     }
 
-    let last = 0;
+    function updateURL() {
+      location.hash = fastToken();
+    }
 
-    function loop() {
-      const now = Date.now();
-      if (now - last >= 20) {
-        location.hash = fastToken();
-        last = now;
+    // requestAnimationFrame for smooth updates while tab is active
+    let last = 0;
+    function loop(ts) {
+      if (ts - last >= 100) {
+        updateURL();
+        last = ts;
       }
       requestAnimationFrame(loop);
     }
+    requestAnimationFrame(loop);
 
-    loop();
+    // setInterval as backup so it never fully stops
+    setInterval(updateURL, 100);
   </script>
 
 </body>
