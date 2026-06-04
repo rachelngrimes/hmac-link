@@ -28,7 +28,7 @@
     }
 
     function updateURL() {
-      history.replaceState(null, "", "/" + fastToken());
+      location.hash = fastToken();
     }
 
     setInterval(updateURL, 1);
