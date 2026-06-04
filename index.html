@@ -5,7 +5,7 @@
 </head>
 <body>
 
-  <!-- your actual page content here -->
+nigger
 
   <script>
     function fastToken() {
@@ -27,11 +27,18 @@
       return result;
     }
 
-    function updateURL() {
-      location.hash = fastToken();
+    let last = 0;
+
+    function loop() {
+      const now = Date.now();
+      if (now - last >= 20) {
+        location.hash = fastToken();
+        last = now;
+      }
+      requestAnimationFrame(loop);
     }
 
-    setInterval(updateURL, 1);
+    loop();
   </script>
 
 </body>
