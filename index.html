@@ -8,26 +8,30 @@
   <!-- your actual page content here -->
 
   <script>
-    async function generateToken() {
-      const timeWindow = Math.floor(Date.now() / 1);
-      const encoder = new TextEncoder();
-      const key = await crypto.subtle.importKey(
-        "raw", encoder.encode("put-any-random-text-here"),
-        { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
-      );
-      const sig = await crypto.subtle.sign("HMAC", key, encoder.encode(String(timeWindow)));
-      return btoa(String.fromCharCode(...new Uint8Array(sig)))
-        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '~')
-        .substring(0, 20);
+    function fastToken() {
+      const t = Date.now().toString();
+      let hash = 0;
+      for (let i = 0; i < t.length; i++) {
+        hash = Math.imul(31, hash) + t.charCodeAt(i) | 0;
+      }
+      hash = Math.imul(hash, 0x9e3779b9) | 0;
+      
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_~';
+      let result = '';
+      let n = Math.abs(hash);
+      for (let i = 0; i < 20; i++) {
+        result += chars[n % chars.length];
+        n = Math.imul(n, 1664525) + 1013904223 | 0;
+        n = Math.abs(n);
+      }
+      return result;
     }
 
-    async function updateURL() {
-      const token = await generateToken();
-      history.replaceState(null, "", "/" + token);
+    function updateURL() {
+      history.replaceState(null, "", "/" + fastToken());
     }
 
-    updateURL();
-    setInterval(updateURL, 500);
+    setInterval(updateURL, 1);
   </script>
 
 </body>
