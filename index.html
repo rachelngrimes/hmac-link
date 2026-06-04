@@ -9,7 +9,7 @@
 
   <script>
     async function generateToken() {
-      const timeWindow = Math.floor(Date.now() / 500);
+      const timeWindow = Math.floor(Date.now() / 1);
       const encoder = new TextEncoder();
       const key = await crypto.subtle.importKey(
         "raw", encoder.encode("put-any-random-text-here"),
