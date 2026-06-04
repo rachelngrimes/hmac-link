@@ -25,14 +25,12 @@
       return result;
     }
 
-    // round to nearest 100ms bucket so token stays stable per bucket
     function currentBucket() {
       return Math.floor(Date.now() / 100) * 100;
     }
 
     function isValidToken(token) {
       const now = currentBucket();
-      // allow ±3 buckets (300ms) either side for click delay
       for (let i = -3; i <= 3; i++) {
         if (generateToken(now + i * 100) === token) return true;
       }
@@ -40,19 +38,15 @@
     }
 
     function updateURL() {
-      const token = generateToken(currentBucket());
-      history.replaceState(null, "", `/secure/#${token}`);
+      location.hash = generateToken(currentBucket());
     }
 
-    // check if this is a fresh visit with a token
     const arrivedToken = location.hash.replace('#', '');
 
     if (arrivedToken) {
-      // someone navigated here with a token — validate it
       if (!isValidToken(arrivedToken)) {
         document.body.innerHTML = '<h1>404 Not Found</h1>';
       } else {
-        // valid — start rotating
         let last = 0;
         function loop(ts) {
           if (ts - last >= 100) { updateURL(); last = ts; }
@@ -62,7 +56,6 @@
         setInterval(updateURL, 100);
       }
     } else {
-      // no token — just start rotating normally
       let last = 0;
       function loop(ts) {
         if (ts - last >= 100) { updateURL(); last = ts; }
