@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Page</title>
-</head>
+<head><title>Page</title></head>
 <body>
 
-nya arigato
+  <a id="link" href="">Go to secure page</a>
 
   <script>
     function fastToken() {
@@ -15,7 +13,6 @@ nya arigato
         hash = Math.imul(31, hash) + t.charCodeAt(i) | 0;
       }
       hash = Math.imul(hash, 0x9e3779b9) | 0;
-      
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_~';
       let result = '';
       let n = Math.abs(hash);
@@ -27,23 +24,21 @@ nya arigato
       return result;
     }
 
-    function updateURL() {
-      location.hash = fastToken();
+    function update() {
+      const token = fastToken();
+      // update the URL bar
+      location.hash = token;
+      // also update the link to secure page
+      document.getElementById("link").href = `/secure/#${token}`;
     }
 
-    // requestAnimationFrame for smooth updates while tab is active
     let last = 0;
     function loop(ts) {
-      if (ts - last >= 100) {
-        updateURL();
-        last = ts;
-      }
+      if (ts - last >= 100) { update(); last = ts; }
       requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);
-
-    // setInterval as backup so it never fully stops
-    setInterval(updateURL, 100);
+    setInterval(update, 100);
   </script>
 
 </body>
