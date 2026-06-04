@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head><title>Secure Page</title></head>
+<body>
+
+<div id="content" style="display:none">
+  <!-- your actual secret content here -->
+  <h1>Welcome to the secure page</h1>
+</div>
+
+<div id="notfound" style="display:none">
+  <h1>404 Not Found</h1>
+</div>
+
+<script>
+  function fastToken() {
+    const t = Date.now().toString();
+    let hash = 0;
+    for (let i = 0; i < t.length; i++) {
+      hash = Math.imul(31, hash) + t.charCodeAt(i) | 0;
+    }
+    hash = Math.imul(hash, 0x9e3779b9) | 0;
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_~';
+    let result = '';
+    let n = Math.abs(hash);
+    for (let i = 0; i < 20; i++) {
+      result += chars[n % chars.length];
+      n = Math.imul(n, 1664525) + 1013904223 | 0;
+      n = Math.abs(n);
+    }
+    return result;
+  }
+
+  function isValidToken(token) {
+    // check current time window and a few ms either side
+    const now = Date.now();
+    for (let offset = -300; offset <= 300; offset += 100) {
+      const t = (now + offset).toString();
+      let hash = 0;
+      for (let i = 0; i < t.length; i++) {
+        hash = Math.imul(31, hash) + t.charCodeAt(i) | 0;
+      }
+      hash = Math.imul(hash, 0x9e3779b9) | 0;
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_~';
+      let result = '';
+      let n = Math.abs(hash);
+      for (let i = 0; i < 20; i++) {
+        result += chars[n % chars.length];
+        n = Math.imul(n, 1664525) + 1013904223 | 0;
+        n = Math.abs(n);
+      }
+      if (result === token) return true;
+    }
+    return false;
+  }
+
+  const token = location.hash.replace('#', '');
+
+  if (token && isValidToken(token)) {
+    document.getElementById("content").style.display = "block";
+  } else {
+    document.getElementById("notfound").style.display = "block";
+  }
+</script>
+
+</body>
+</html>
